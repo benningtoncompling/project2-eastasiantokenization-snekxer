@@ -26,35 +26,33 @@ accuracy: <# correct / total # of sentences>
 """
 import sys
 import regex
-#infile = sys.argv[1]
-#outfile = sys.argv[2]
+infile = sys.argv[1]
+outfile = sys.argv[2]
 
-outfile = "out.txt"
-infile = open("in.txt", "r", encoding='UTF-8').read()
+#outfile = "out.txt"
+lines = open(infile, "r", encoding='UTF-8').read().split('\n')
 
-wordlist = open("japanese_wordlist.txt", "r", encoding='UTF-8').read()
+eval = open('gold_standard.txt', "r", encoding='UTF-8').read().split('\n')
 
-lines = infile.split('\n')
+wordlist = open("japanese_wordlist.txt", "r", encoding='UTF-8').read().split('\n')
+
 allwords = []
 words = []
 
 def matchy(line):
-    print(line)
-    #reg = r"^)" + regex.escape(line) + r"$"
+    #checks if it's at the end of line so it can finish the lopp
     if line != "。":
+        #is the whole line in the wordlist
         if line in wordlist:
-        #if regex.search(reg, wordlist, flags="MULTILINE"):
             words.append(line)
             return
         else:
             restofline = line
-        #reg = r"^)" + regex.escape(restofline) + r"$"
-        while restofline not in wordlist:
-        #while regex.search(reg, wordlist, flags="MULTILINE"):
+        #decreases rest of the line until whatever is left is in the dictionary or is one character long
+        while restofline not in wordlist and len(restofline) != 1:
             restofline = line[0:len(restofline) - 1]
-            # print(restofline)
         words.append(restofline)
-        print(restofline)
+        #gets the remainder of the line without the word found
         restofline = line[len(restofline):len(line)]
         matchy(restofline)
     else:
@@ -64,12 +62,39 @@ def matchy(line):
 with open(outfile, 'w', encoding='UTF-8') as output:
     for line in lines:
         matchy(line)
-        print(words)
         for word in words:
             output.write(word + " ")
         output.write("\n")
-        allwords.append((words[:], words[0]))
+        allwords.append((words[:]))
         words.clear()
+
+
+#for ev in eval:
+#    ev = list(ev.split(" "))
+#    print(ev)
+#    if ev in allwords:
+#        print("found")
+
+matches = 0
+
+for i in range(0, len(eval)):
+    eval[i] = list(eval[i].split(" "))
+    if eval[i] == allwords[i]:
+        matches = matches + 1
+
+print("# of sentences tokenized correctly: " + str(matches))
+print("# of sentences tokenized incorrectly: " + str((len(eval) - matches)))
+print("accuracy: " + str(matches) + "/" + str(len(eval)))
+
+
+"""
+# of sentences tokenized correctly: <# of lines of output that match gold_standard>
+# of sentences tokenized incorrectly: <# of lines of output that don't match
+gold_standard>
+accuracy: <# correct / total # of sentences>
+"""
+
+
 
 
 
