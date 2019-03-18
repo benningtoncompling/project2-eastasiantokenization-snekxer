@@ -82,17 +82,11 @@ for i in range(0, len(eval)):
     if eval[i] == allwords[i]:
         matches = matches + 1
 
-print("# of sentences tokenized correctly: " + str(matches))
-print("# of sentences tokenized incorrectly: " + str((len(eval) - matches)))
-print("accuracy: " + str(matches) + "/" + str(len(eval)))
+evaluation = "# of sentences tokenized correctly: " + str(matches) + '\n' + \
+             "# of sentences tokenized incorrectly: " + str((len(eval) - matches)) + '\n' + \
+             "accuracy: " + str(matches) + "/" + str(len(eval))
+open("evaluation.txt","w", encoding='UTF-8').write(evaluation)
 
-
-"""
-# of sentences tokenized correctly: <# of lines of output that match gold_standard>
-# of sentences tokenized incorrectly: <# of lines of output that don't match
-gold_standard>
-accuracy: <# correct / total # of sentences>
-"""
 
 
 
